@@ -192,16 +192,8 @@ function TypingSession({ session }: { session: Session }) {
           sourceText={session.sourceText}
           charStatuses={state.charStatuses}
           currentIndex={state.currentIndex}
+          onActivate={focusMobileKeyboard}
         />
-      </div>
-
-      <div className="mt-4 md:hidden">
-        <button
-          onClick={focusMobileKeyboard}
-          className="w-full max-w-3xl mx-auto block px-4 py-2 text-sm rounded-lg border border-[var(--surface-border)] text-[var(--text-muted)] hover:text-[var(--accent)] hover:border-[var(--accent)] transition-colors"
-        >
-          Tap here to open keyboard
-        </button>
       </div>
 
       {!state.started && (

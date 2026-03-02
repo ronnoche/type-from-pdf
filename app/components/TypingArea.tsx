@@ -7,6 +7,7 @@ interface TypingAreaProps {
   sourceText: string;
   charStatuses: CharStatus[];
   currentIndex: number;
+  onActivate?: () => void;
 }
 
 const WINDOW_CHARS = 2000;
@@ -15,6 +16,7 @@ export default function TypingArea({
   sourceText,
   charStatuses,
   currentIndex,
+  onActivate,
 }: TypingAreaProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const cursorRef = useRef<HTMLSpanElement>(null);
@@ -50,6 +52,7 @@ export default function TypingArea({
     <div
       ref={containerRef}
       tabIndex={0}
+      onClick={onActivate}
       className="w-full max-w-3xl mx-auto overflow-y-auto rounded-xl bg-[var(--bg-surface)] p-6 outline-none focus:ring-2 focus:ring-[var(--accent)]/30"
       style={{ maxHeight: "60vh", lineHeight: "2em" }}
     >
