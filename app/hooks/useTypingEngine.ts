@@ -102,42 +102,29 @@ export function useTypingEngine(
     });
   }, [sessionId]);
 
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (stateRef.current.completed) return;
+  const applyBackspace = useCallback(() => {
+    setState((prev) => {
+      if (prev.currentIndex <= 0) return prev;
+      const newStatuses = [...prev.charStatuses];
+      const wasCorrect = newStatuses[prev.currentIndex - 1] === "correct";
+      newStatuses[prev.currentIndex - 1] = "pending";
+      return {
+        ...prev,
+        currentIndex: prev.currentIndex - 1,
+        charStatuses: newStatuses,
+        correctCount: wasCorrect
+          ? prev.correctCount - 1
+          : prev.correctCount,
+        errorCount: !wasCorrect ? prev.errorCount - 1 : prev.errorCount,
+        progress: Math.round(
+          ((prev.currentIndex - 1) / sourceText.length) * 100
+        ),
+      };
+    });
+  }, [sourceText.length]);
 
-      if (IGNORED_KEYS.has(e.key)) return;
-
-      e.preventDefault();
-
-      if (e.key === "Backspace") {
-        setState((prev) => {
-          if (prev.currentIndex <= 0) return prev;
-          const newStatuses = [...prev.charStatuses];
-          const wasCorrect = newStatuses[prev.currentIndex - 1] === "correct";
-          newStatuses[prev.currentIndex - 1] = "pending";
-          return {
-            ...prev,
-            currentIndex: prev.currentIndex - 1,
-            charStatuses: newStatuses,
-            correctCount: wasCorrect
-              ? prev.correctCount - 1
-              : prev.correctCount,
-            errorCount: !wasCorrect ? prev.errorCount - 1 : prev.errorCount,
-            progress: Math.round(
-              ((prev.currentIndex - 1) / sourceText.length) * 100
-            ),
-          };
-        });
-        return;
-      }
-
-      if (e.ctrlKey || e.metaKey || e.altKey) return;
-
-      let typed = e.key;
-      if (e.key === "Enter") typed = "\n";
-      if (e.key === "Tab") typed = "\t";
-
+  const applyTypedChar = useCallback(
+    (typed: string) => {
       if (typed.length !== 1) return;
 
       if (!stateRef.current.started) {
@@ -178,6 +165,44 @@ export function useTypingEngine(
     },
     [sourceText, startTimer, saveProgress]
   );
+
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (stateRef.current.completed) return;
+
+      if (IGNORED_KEYS.has(e.key)) return;
+
+      e.preventDefault();
+
+      if (e.key === "Backspace") {
+        applyBackspace();
+        return;
+      }
+
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+
+      let typed = e.key;
+      if (e.key === "Enter") typed = "\n";
+      if (e.key === "Tab") typed = "\t";
+
+      applyTypedChar(typed);
+    },
+    [applyBackspace, applyTypedChar]
+  );
+
+  const handleTextInput = useCallback(
+    (text: string) => {
+      for (const char of text) {
+        applyTypedChar(char);
+      }
+    },
+    [applyTypedChar]
+  );
+
+  const handleBackspace = useCallback(() => {
+    if (stateRef.current.completed) return;
+    applyBackspace();
+  }, [applyBackspace]);
 
   useEffect(() => {
     if (stateRef.current.completed) {
@@ -220,6 +245,8 @@ export function useTypingEngine(
   return {
     state,
     handleKeyDown,
+    handleTextInput,
+    handleBackspace,
     restart,
   };
 }

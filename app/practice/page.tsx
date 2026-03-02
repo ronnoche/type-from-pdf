@@ -56,7 +56,8 @@ function PracticeContent() {
 function TypingSession({ session }: { session: Session }) {
   const router = useRouter();
   const mobileInputRef = useRef<HTMLInputElement>(null);
-  const { state, handleKeyDown, restart } = useTypingEngine(
+  const { state, handleKeyDown, handleTextInput, handleBackspace, restart } =
+    useTypingEngine(
     session.sourceText,
     session.id,
     session.currentIndex,
@@ -73,6 +74,35 @@ function TypingSession({ session }: { session: Session }) {
   const focusMobileKeyboard = useCallback(() => {
     mobileInputRef.current?.focus();
   }, []);
+
+  const handleMobileBeforeInput = useCallback(
+    (e: React.FormEvent<HTMLInputElement>) => {
+      const native = e.nativeEvent as InputEvent;
+      if (!native) return;
+
+      if (native.inputType === "deleteContentBackward") {
+        e.preventDefault();
+        handleBackspace();
+        return;
+      }
+
+      if (native.inputType === "insertLineBreak") {
+        e.preventDefault();
+        handleTextInput("\n");
+        return;
+      }
+
+      if (
+        native.inputType === "insertText" ||
+        native.inputType === "insertCompositionText"
+      ) {
+        if (!native.data) return;
+        e.preventDefault();
+        handleTextInput(native.data);
+      }
+    },
+    [handleBackspace, handleTextInput]
+  );
 
   const goBack = useCallback(() => {
     router.push("/");
@@ -121,6 +151,13 @@ function TypingSession({ session }: { session: Session }) {
         spellCheck={false}
         className="absolute opacity-0 pointer-events-none w-0 h-0"
         aria-label="Typing input"
+        onBeforeInput={handleMobileBeforeInput}
+        onKeyDown={(e) => {
+          if (e.key === "Backspace") {
+            e.preventDefault();
+            handleBackspace();
+          }
+        }}
       />
 
       <div className="flex items-center justify-between max-w-3xl mx-auto w-full mb-6">
