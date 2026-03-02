@@ -20,7 +20,21 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${mono.className} min-h-screen antialiased`}>
-        {children}
+        <div className="min-h-screen flex flex-col">
+          <div className="flex-1">{children}</div>
+          <footer className="px-6 py-4">
+            <div className="max-w-6xl mx-auto flex justify-end text-sm text-[var(--text-muted)]">
+              <a
+                href="https://github.com/ronnoche"
+                target="_blank"
+                rel="noreferrer"
+                className="hover:text-[var(--accent)] transition-colors"
+              >
+                made by @ronnoche
+              </a>
+            </div>
+          </footer>
+        </div>
       </body>
     </html>
   );
