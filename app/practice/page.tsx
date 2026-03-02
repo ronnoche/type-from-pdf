@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback, Suspense } from "react";
+import { useEffect, useState, useCallback, Suspense, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { getSession, Session } from "@/app/lib/storage";
 import { useTypingEngine } from "@/app/hooks/useTypingEngine";
@@ -55,6 +55,7 @@ function PracticeContent() {
 
 function TypingSession({ session }: { session: Session }) {
   const router = useRouter();
+  const mobileInputRef = useRef<HTMLInputElement>(null);
   const { state, handleKeyDown, restart } = useTypingEngine(
     session.sourceText,
     session.id,
@@ -68,6 +69,10 @@ function TypingSession({ session }: { session: Session }) {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
+
+  const focusMobileKeyboard = useCallback(() => {
+    mobileInputRef.current?.focus();
+  }, []);
 
   const goBack = useCallback(() => {
     router.push("/");
@@ -106,6 +111,18 @@ function TypingSession({ session }: { session: Session }) {
 
   return (
     <main className="flex flex-col min-h-screen px-6 py-8">
+      <input
+        ref={mobileInputRef}
+        type="text"
+        inputMode="text"
+        autoComplete="off"
+        autoCorrect="off"
+        autoCapitalize="off"
+        spellCheck={false}
+        className="absolute opacity-0 pointer-events-none w-0 h-0"
+        aria-label="Typing input"
+      />
+
       <div className="flex items-center justify-between max-w-3xl mx-auto w-full mb-6">
         <div className="flex items-center gap-3">
           <button
@@ -139,6 +156,15 @@ function TypingSession({ session }: { session: Session }) {
           charStatuses={state.charStatuses}
           currentIndex={state.currentIndex}
         />
+      </div>
+
+      <div className="mt-4 md:hidden">
+        <button
+          onClick={focusMobileKeyboard}
+          className="w-full max-w-3xl mx-auto block px-4 py-2 text-sm rounded-lg border border-[var(--surface-border)] text-[var(--text-muted)] hover:text-[var(--accent)] hover:border-[var(--accent)] transition-colors"
+        >
+          Tap here to open keyboard
+        </button>
       </div>
 
       {!state.started && (
