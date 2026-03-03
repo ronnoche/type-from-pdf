@@ -6,6 +6,7 @@ import { getSession, Session } from "@/app/lib/storage";
 import { useTypingEngine } from "@/app/hooks/useTypingEngine";
 import TypingArea from "@/app/components/TypingArea";
 import StatsBar from "@/app/components/StatsBar";
+import { truncateText } from "@/app/lib/text";
 
 function PracticeContent() {
   const searchParams = useSearchParams();
@@ -108,13 +109,17 @@ function TypingSession({ session }: { session: Session }) {
     router.push("/");
   }, [router]);
 
+  const displayFileName = truncateText(session.fileName, 60);
+
   if (state.completed) {
     return (
       <main className="flex flex-col items-center justify-center min-h-screen px-6 gap-6">
         <h1 className="text-2xl font-bold text-[var(--text-correct)]">
           Complete
         </h1>
-        <p className="text-sm text-[var(--text-muted)]">{session.fileName}</p>
+        <p className="text-sm text-[var(--text-muted)]" title={session.fileName}>
+          {displayFileName}
+        </p>
         <StatsBar
           wpm={state.wpm}
           accuracy={state.accuracy}
@@ -168,8 +173,11 @@ function TypingSession({ session }: { session: Session }) {
           >
             &larr; Back
           </button>
-          <span className="text-sm text-[var(--text-muted)] truncate max-w-xs">
-            {session.fileName}
+          <span
+            className="text-sm text-[var(--text-muted)] truncate max-w-xs"
+            title={session.fileName}
+          >
+            {displayFileName}
           </span>
         </div>
         <button

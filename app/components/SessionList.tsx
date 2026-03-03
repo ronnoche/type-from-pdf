@@ -1,6 +1,7 @@
 "use client";
 
 import { Session, deleteSession } from "@/app/lib/storage";
+import { truncateText } from "@/app/lib/text";
 
 interface SessionListProps {
   sessions: Session[];
@@ -28,6 +29,7 @@ export default function SessionList({ sessions, onResume, onDelete }: SessionLis
           const progress = session.sourceText.length > 0
             ? Math.round((session.currentIndex / session.sourceText.length) * 100)
             : 0;
+          const displayName = truncateText(session.fileName, 60);
 
           return (
             <div
@@ -37,9 +39,10 @@ export default function SessionList({ sessions, onResume, onDelete }: SessionLis
               <button
                 onClick={() => onResume(session)}
                 className="flex-1 text-left"
+                title={session.fileName}
               >
                 <p className="text-sm text-[var(--text-primary)] truncate">
-                  {session.fileName}
+                  {displayName}
                 </p>
                 <p className="text-xs text-[var(--text-muted)] mt-0.5">
                   {session.completed ? (

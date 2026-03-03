@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import ThemeToggle from "@/app/components/ThemeToggle";
 
 const mono = JetBrains_Mono({
   subsets: ["latin"],
@@ -21,6 +22,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${mono.className} min-h-screen antialiased`}>
         <div className="min-h-screen flex flex-col">
+          <header className="px-6 py-4">
+            <div className="max-w-6xl mx-auto flex justify-end">
+              <ThemeToggle />
+            </div>
+          </header>
           <div className="flex-1">{children}</div>
           <footer className="px-6 py-4">
             <div className="max-w-6xl mx-auto flex justify-end text-sm text-[var(--text-muted)]">
