@@ -99,7 +99,7 @@ export default function DropZone({ onFileSelected, loading, error }: DropZonePro
             Drop a PDF here or click to browse
           </p>
           <p className="text-xs text-[var(--text-muted)]">
-            PDF text will be extracted for typing practice
+            We extract the text. You do the learning.
           </p>
         </div>
       )}

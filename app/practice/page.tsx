@@ -145,7 +145,7 @@ function TypingSession({ session }: { session: Session }) {
   }
 
   return (
-    <main className="flex flex-col min-h-screen px-6 py-8">
+    <main className="flex flex-col flex-1 px-6 py-8 overflow-hidden">
       <input
         ref={mobileInputRef}
         type="text"

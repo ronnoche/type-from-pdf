@@ -8,6 +8,7 @@ export interface Session {
   startedAt: string;
   elapsedMs: number;
   completed: boolean;
+  isSample?: boolean;
 }
 
 const STORAGE_KEY = "pdf-typing-sessions";
@@ -27,14 +28,18 @@ function writeSessions(sessions: Session[]): void {
 }
 
 export function getSessions(): Session[] {
-  return readSessions();
+  return readSessions().filter((session) => !session.isSample);
 }
 
 export function getSession(id: string): Session | undefined {
   return readSessions().find((s) => s.id === id);
 }
 
-export function createSession(fileName: string, sourceText: string): Session {
+export function createSession(
+  fileName: string,
+  sourceText: string,
+  isSample: boolean = false
+): Session {
   const session: Session = {
     id: crypto.randomUUID(),
     fileName,
@@ -45,6 +50,7 @@ export function createSession(fileName: string, sourceText: string): Session {
     startedAt: new Date().toISOString(),
     elapsedMs: 0,
     completed: false,
+    isSample,
   };
   const sessions = readSessions();
   sessions.unshift(session);

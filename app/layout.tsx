@@ -9,8 +9,8 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Type from PDF",
-  description: "Upload a PDF and practice typing its content",
+  title: "Retype to Remember",
+  description: "Turn any PDF into an active learning session",
 };
 
 export default function RootLayout({

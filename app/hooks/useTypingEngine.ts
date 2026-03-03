@@ -28,6 +28,22 @@ const IGNORED_KEYS = new Set([
   "F7", "F8", "F9", "F10", "F11", "F12",
 ]);
 
+function normalizeForComparison(char: string): string {
+  if (char === "\u2014" || char === "\u2013" || char === "\u2010" || char === "\u2011") {
+    return "-";
+  }
+  if (char === "\u2018" || char === "\u2019" || char === "\u02BC") {
+    return "'";
+  }
+  if (char === "\u201C" || char === "\u201D") {
+    return '"';
+  }
+  if (char === "\u00A0") {
+    return " ";
+  }
+  return char;
+}
+
 export function useTypingEngine(
   sourceText: string,
   sessionId: string,
@@ -135,7 +151,8 @@ export function useTypingEngine(
         if (prev.currentIndex >= sourceText.length) return prev;
 
         const expected = sourceText[prev.currentIndex];
-        const isCorrect = typed === expected;
+        const isCorrect =
+          normalizeForComparison(typed) === normalizeForComparison(expected);
         const newStatuses = [...prev.charStatuses];
         newStatuses[prev.currentIndex] = isCorrect ? "correct" : "incorrect";
 

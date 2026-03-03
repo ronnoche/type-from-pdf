@@ -11,6 +11,7 @@ import {
   createSession,
   deleteSession,
 } from "@/app/lib/storage";
+import { SAMPLE_TEXT } from "@/app/lib/sample";
 
 export default function UploadPage() {
   const router = useRouter();
@@ -57,6 +58,21 @@ export default function UploadPage() {
     setSessions(getSessions());
   }, []);
 
+  const handleStartSample = useCallback(() => {
+    setError(null);
+    setLoading(true);
+    try {
+      const session = createSession(
+        "Sample: Retyping over passive reading",
+        SAMPLE_TEXT,
+        true
+      );
+      router.push(`/practice?id=${session.id}`);
+    } finally {
+      setLoading(false);
+    }
+  }, [router]);
+
   return (
     <main className="flex flex-col items-center px-6 py-16">
       <div className="mb-4 text-[var(--accent)]" aria-hidden="true">
@@ -83,9 +99,9 @@ export default function UploadPage() {
           <path d="M53.5 22H58.5M56 19.5V24.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
         </svg>
       </div>
-      <h1 className="text-3xl font-bold tracking-tight mb-2">Type from PDF</h1>
+      <h1 className="text-3xl font-bold tracking-tight mb-2">Retype to Remember</h1>
       <p className="text-[var(--text-muted)] mb-10 text-center max-w-md">
-        Upload a PDF and practice retyping its content.
+        Turn any PDF into an active learning session
       </p>
 
       <DropZone
@@ -93,6 +109,15 @@ export default function UploadPage() {
         loading={loading}
         error={error}
       />
+
+      <button
+        type="button"
+        onClick={handleStartSample}
+        disabled={loading}
+        className="mt-4 text-sm text-[var(--accent)] hover:text-[var(--accent)]/80 disabled:opacity-60 disabled:cursor-not-allowed"
+      >
+        Practice with a sample passage
+      </button>
 
       <SessionList
         sessions={sessions}

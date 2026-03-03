@@ -53,7 +53,7 @@ export default function TypingArea({
       ref={containerRef}
       tabIndex={0}
       onClick={onActivate}
-      className="w-full max-w-3xl mx-auto overflow-y-auto rounded-xl bg-[var(--bg-surface)] p-6 outline-none focus:ring-2 focus:ring-[var(--accent)]/30"
+      className="w-full max-w-4xl mx-auto overflow-y-auto rounded-xl bg-[var(--bg-surface)] p-6 outline-none focus:ring-2 focus:ring-[var(--accent)]/30"
       style={{ maxHeight: "60vh", lineHeight: "2em" }}
     >
       <pre className="whitespace-pre-wrap break-words text-lg font-mono leading-relaxed">
